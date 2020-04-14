@@ -1,0 +1,22 @@
+#loading-screen {
+	overflow: hidden;
+	background-color: #000;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	color: #fff;
+	height: 100%;
+
+	.company-title {
+		font-size: 3rem;
+	}
+
+	.subtitle {
+		font-size: 2rem;
+	}
+
+	.game-title {
+		font-size: 2.5rem;
+	}
+}

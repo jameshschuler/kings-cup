@@ -1,0 +1,11 @@
+#root {
+	height: 100vh;
+}
+
+.container {
+	height: 100%;
+}
+
+@import './loading-screen.scss';
+@import './info-bar.scss';
+@import './room-code-screen.scss';
