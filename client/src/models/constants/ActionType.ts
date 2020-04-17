@@ -1,0 +1,6 @@
+export enum ActionType {
+	CONNECTED = 'CONNECTED',
+	JOIN_ROOM = 'JOIN_ROOM',
+	JOINING = 'JOINING',
+	LOADING = 'LOADING',
+}
