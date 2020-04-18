@@ -8,36 +8,52 @@ import { User } from './models/User';
 const PORT = process.env.PORT || 5000;
 
 const app = express();
-const server = http.createServer(app);
-const io = socketio(server);
+const server = http.createServer( app );
+const io = socketio( server );
 
-// TODO: needs to be a dictionary
 const users = new Array<User>();
 const rooms = new Array<Room>();
 
 const init = () => {
-	rooms.push(new Room('testroom'));
+  rooms.push( new Room( 'testroom' ) );
 };
 
-io.on('connection', (socket: socketio.Socket) => {
-	console.log('user connected');
+io.on( 'connection', ( socket: socketio.Socket ) => {
+  console.log( 'user connected' );
 
-	socket.on('join-room', (request: JoinRoomRequest) => {
-		console.log('hello', request);
+  socket.on( 'join-room', ( request: JoinRoomRequest ) => {
+    if ( !request ) {
+      // TODO: handle request being null
+    }
 
-		if (!request) {
-			// TODO: handle request being null
-		}
+    let storedRoom = rooms.find( r => r.roomCode === request.roomCode );
 
-		// TODO:
-		// add user to user list
-		// add user to room
-		// socketio - add user to room
-		// send updated room user list to all users in the room
-	});
-});
+    if ( !storedRoom ) {
+      storedRoom = new Room( request.roomCode );
+      rooms.push( storedRoom );
+    }
 
-server.listen(PORT, () => {
-	init();
-	console.log(`Server started on port: ${PORT}`);
-});
+    const user = storedRoom.addUser( socket.id, request.name.trim() );
+
+    users.push( user );
+
+    socket.join( request.roomCode );
+
+    socket.emit( 'joined-room', { name: user.name, roomCode: user.roomCode } );
+    io.to( request.roomCode ).emit( 'room-updated', storedRoom.users );
+  } );
+
+  socket.on( 'disconnect', () => {
+    /**
+     * TODO:
+     * remove user from room
+     * remove user from users list
+     * send room-updated response
+     */
+  } )
+} );
+
+server.listen( PORT, () => {
+  init();
+  console.log( `Server started on port: ${PORT}` );
+} );

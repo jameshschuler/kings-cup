@@ -1,18 +1,29 @@
 #info-bar {
 	border-bottom: 2px solid grey;
-	padding: 1rem 0.5rem;
+	padding: 0.5rem;
 	display: flex;
-	justify-content: space-between;
-
-	h3 {
+  justify-content: space-between;
+  align-items: center;
+  
+	h2 {
 		margin: 0;
 	}
 
-	.success-icon {
-		color: green;
-	}
+  #right {
+    display: flex;
+    align-items: center;
 
-	.danger-icon {
-		color: red;
-	}
+    #player-info {
+      font-size: 1.2rem;
+      margin-right: .75rem;
+    }
+
+    .success-icon {
+      color: green;
+    }
+  
+    .danger-icon {
+      color: red;
+    }
+  }
 }
