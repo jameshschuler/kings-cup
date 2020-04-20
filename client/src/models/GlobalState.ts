@@ -1,3 +1,4 @@
+import { UserResponse } from './response/UserResponse';
 import { User } from './User';
 
 export interface GlobalState {
@@ -8,7 +9,7 @@ export interface GlobalState {
   joining: boolean;
   loading: boolean;
   me: User | null;
-  players: Array<string>;
+  players: Array<UserResponse>;
 
   // Actions:
   joinRoom: ( name: string, roomCode: string ) => any;

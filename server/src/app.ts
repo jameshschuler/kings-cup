@@ -11,7 +11,7 @@ const app = express();
 const server = http.createServer( app );
 const io = socketio( server );
 
-const users = new Array<User>();
+let users = new Array<User>();
 const rooms = new Array<Room>();
 
 const init = () => {
@@ -43,13 +43,19 @@ io.on( 'connection', ( socket: socketio.Socket ) => {
     io.to( request.roomCode ).emit( 'room-updated', storedRoom.users );
   } );
 
-  socket.on( 'disconnect', () => {
-    /**
-     * TODO:
-     * remove user from room
-     * remove user from users list
-     * send room-updated response
-     */
+  socket.on( 'disconnect', ( roomCode: string ) => {
+    const storedUser = users.find( u => u.id === socket.id );
+
+    if ( storedUser ) {
+      users = users.filter( u => u.id !== storedUser.id );
+      const room = rooms.find( r => r.roomCode === storedUser.roomCode );
+
+      if ( room ) {
+        room.removeUser( storedUser.id );
+
+        io.to( storedUser.roomCode ).emit( 'room-updated', room.users );
+      }
+    }
   } )
 } );
 

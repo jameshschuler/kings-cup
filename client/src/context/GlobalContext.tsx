@@ -9,9 +9,9 @@ import AppReducer from './AppReducer';
 const initialState: GlobalState = {
   connected: false,
   joining: false,
-  loading: true,
-  me: null,
-  players: [],
+  loading: false, // true,
+  me: { name: 'Bob', roomCode: 'testroom' }, // null,
+  players: [ { id: 1, name: 'Bob', icon: 'fas fa-ghost' }, { id: 2, name: 'John', icon: 'fas fa-ghost' } ], // [],
   socket: null,
   joinRoom: ( name: string, roomCode: string ) => { },
   makeConnection: () => { },
@@ -42,6 +42,8 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ( { children } ) =>
 
     // Register Events
     if ( socket ) {
+
+      // Room Updated
       socket.on( 'room-updated', ( response: RoomUpdatedResponse ) => {
         console.log( 'room-updated response', response );
         dispatch( {
@@ -52,6 +54,7 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ( { children } ) =>
         } )
       } );
 
+      // Joined Room
       socket.on( 'joined-room', ( response: JoinedRoomResponse ) => {
         console.log( 'joined-room response', response );
 

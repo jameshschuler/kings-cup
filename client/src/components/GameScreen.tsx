@@ -1,15 +1,10 @@
-import React, { useContext } from 'react';
-import { GlobalContext } from '../context/GlobalContext';
+import React from 'react';
+import PlayersCircle from './PlayersCircle';
 
 const GameScreen: React.FC = () => {
-  const { players } = useContext( GlobalContext );
-
   return <div id="game-screen">
-    Game Screen
-    {players.map( ( player: string, index: number ) => {
-    return <p>{player}</p>
-  }
-  )}
+    <div id="kings-cup"></div>
+    <PlayersCircle />
   </div>
 }
 

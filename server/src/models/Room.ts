@@ -1,3 +1,4 @@
+import { UserResponse } from './response/UserResponse';
 import { User } from './User';
 
 export class Room {
@@ -11,8 +12,14 @@ export class Room {
 
   public get roomCode(): string { return this._roomCode; }
 
-  public get users(): Array<string> {
-    return this._users.map( u => u.name );
+  public get users(): Array<UserResponse> {
+    const response: UserResponse[] = this._users.map( ( u: User, index: number ) => {
+      return { id: index, icon: 'fas fa-ghost', name: u.name }
+    } );
+
+
+    // TODO: make sure list is in same order for every player... maybe sort by alpha
+    return response;
   }
 
   public addUser( id: string, name: string ): User {
@@ -26,5 +33,9 @@ export class Room {
 
     this._users.push( newUser );
     return newUser;
+  }
+
+  public removeUser( id: string ): void {
+    this._users = this._users.filter( u => u.id !== id );
   }
 }
