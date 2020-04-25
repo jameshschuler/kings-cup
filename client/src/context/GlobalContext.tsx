@@ -4,17 +4,25 @@ import { ActionType } from '../models/constants/ActionType';
 import { GlobalState } from '../models/GlobalState';
 import { JoinedRoomResponse } from '../models/response/JoinedRoomResponse';
 import { RoomUpdatedResponse } from '../models/response/RoomUpdatedResponse';
+import { StartedGameResponse } from '../models/response/StartedGameResponse';
 import AppReducer from './AppReducer';
 
 const initialState: GlobalState = {
   connected: false,
+  currentTurn: null,
+  isStarted: false,
   joining: false,
-  loading: false, // true,
-  me: { name: 'Bob', roomCode: 'testroom' }, // null,
-  players: [ { id: 1, name: 'Bob', icon: 'fas fa-ghost' }, { id: 2, name: 'John', icon: 'fas fa-ghost' } ], // [],
+  loading: true,
+  me: null,
+  players: [],
   socket: null,
+
+  // Actions
+  canStartGame: () => false,
+  isMyTurn: () => { },
   joinRoom: ( name: string, roomCode: string ) => { },
   makeConnection: () => { },
+  startGame: () => { }
 };
 
 export const GlobalContext = createContext( initialState );
@@ -25,10 +33,26 @@ interface GlobalProviderProps {
 
 // Provider component
 export const GlobalProvider: React.FC<GlobalProviderProps> = ( { children } ) => {
-  const [ { connected, joining, loading, me, players, socket }, dispatch ] = useReducer(
+  const [ { connected, currentTurn, isStarted, joining, loading, me, players, socket }, dispatch ] = useReducer(
     AppReducer,
     initialState
   );
+
+  const canStartGame = (): boolean => {
+    if ( players.length >= 2 && me && !isStarted ) {
+      return true;
+    }
+
+    return false;
+  }
+
+  const isMyTurn = (): boolean => {
+    if ( me && currentTurn ) {
+      return me.name === currentTurn.name;
+    }
+
+    return false;
+  }
 
   // Actions:
   const joinRoom = ( name: string, roomCode: string ) => {
@@ -42,6 +66,19 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ( { children } ) =>
 
     // Register Events
     if ( socket ) {
+
+      // Game Started
+      socket.on( 'game-started', ( response: StartedGameResponse ) => {
+        console.log( "game-started", response );
+
+        dispatch( {
+          type: ActionType.GAME_STARTED,
+          payload: {
+            currentTurn: response.currentTurn,
+            isStarted: response.isStarted,
+          }
+        } );
+      } );
 
       // Room Updated
       socket.on( 'room-updated', ( response: RoomUpdatedResponse ) => {
@@ -78,9 +115,16 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ( { children } ) =>
     } );
   };
 
+  const startGame = () => {
+    socket?.emit( 'start-game', { name: me?.name, roomCode: me?.roomCode } );
+  }
+
   return (
     <GlobalContext.Provider
-      value={{ connected, joining, loading, me, players, socket, joinRoom, makeConnection }}
+      value={{
+        connected, currentTurn, isStarted, joining, loading, me, players, socket,
+        canStartGame, isMyTurn, joinRoom, makeConnection, startGame
+      }}
     >
       {children}
     </GlobalContext.Provider>

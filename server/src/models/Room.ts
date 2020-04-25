@@ -1,13 +1,17 @@
+import { Game } from './Game';
+import { StartedGameResponse } from './response/StartedGameResponse';
 import { UserResponse } from './response/UserResponse';
 import { User } from './User';
 
 export class Room {
   private _roomCode: string;
   private _users: Array<User>;
+  private _game: Game;
 
   public constructor ( roomCode: string ) {
     this._roomCode = roomCode;
     this._users = new Array<User>();
+    this._game = new Game();
   }
 
   public get roomCode(): string { return this._roomCode; }
@@ -37,5 +41,15 @@ export class Room {
 
   public removeUser( id: string ): void {
     this._users = this._users.filter( u => u.id !== id );
+  }
+
+  public startGame(): StartedGameResponse {
+    this._game.turnOrder = this._users;
+    this._game.startGame();
+
+    return {
+      isStarted: this._game.isStarted,
+      currentTurn: this._game.currentTurn!
+    }
   }
 }

@@ -2,11 +2,17 @@ import React, { useContext } from 'react';
 import { GlobalContext } from '../context/GlobalContext';
 
 const InfoBar: React.FC = () => {
-  const { connected, me } = useContext( GlobalContext );
+  const { connected, me, currentTurn } = useContext( GlobalContext );
 
   return (
     <div id='info-bar'>
-      <h2>HomeDoneGames</h2>
+
+      <div id="left">
+        <h2>HomeDoneGames</h2>
+      </div>
+      <div id="center">
+        {currentTurn && <h3>{currentTurn.name}</h3>}
+      </div>
       <div id="right">
         {
           me && (

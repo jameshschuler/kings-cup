@@ -2,6 +2,7 @@ import express from 'express';
 import http from 'http';
 import socketio from 'socket.io';
 import { JoinRoomRequest } from './models/request/JoinRoomRequest';
+import { StartGameRequest } from './models/request/StartGameRequest';
 import { Room } from './models/Room';
 import { User } from './models/User';
 
@@ -15,11 +16,26 @@ let users = new Array<User>();
 const rooms = new Array<Room>();
 
 const init = () => {
-  rooms.push( new Room( 'testroom' ) );
+  rooms.push( new Room( 'test' ) );
 };
 
 io.on( 'connection', ( socket: socketio.Socket ) => {
   console.log( 'user connected' );
+
+  /**
+   * Start Game
+   */
+  socket.on( 'start-game', ( request: StartGameRequest ) => {
+    const storedRoom = rooms.find( r => r.roomCode === request.roomCode );
+
+    if ( !storedRoom ) {
+      // TODO: handle invalid room
+    }
+
+    const startedGameResponse = storedRoom!.startGame();
+
+    io.to( request.roomCode ).emit( 'game-started', startedGameResponse );
+  } )
 
   socket.on( 'join-room', ( request: JoinRoomRequest ) => {
     if ( !request ) {

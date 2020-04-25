@@ -11,6 +11,12 @@ export default ( state: GlobalState, action: Action ): GlobalState => {
         loading: action.payload.loading,
         socket: action.payload.socket,
       };
+    case ActionType.GAME_STARTED:
+      return {
+        ...state,
+        currentTurn: action.payload.currentTurn,
+        isStarted: action.payload.isStarted
+      }
     case ActionType.JOINING:
       return {
         ...state,

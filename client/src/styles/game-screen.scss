@@ -4,6 +4,8 @@
   height: 85%;
   position: relative;
 
+  @import './game-screen-info-bar.scss';
+
   #kings-cup {
     border: 2px solid red;
     border-radius: 50%;
@@ -11,8 +13,7 @@
     height: 150px;
     width: 150px;
     left: calc(50% - 75px);
-    top: 40%;
-    
+    top: 35%;
   }
 
   #players-circle {
@@ -26,6 +27,7 @@
   
   .player {
     border: 2px solid #000;
+    box-shadow: 2px 2px 2px #000;
     height: 50px;
     width: 125px;
     position: absolute;

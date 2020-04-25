@@ -1,0 +1,14 @@
+#game-screen-info-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: .5rem;
+
+  #start-game-btn {
+
+  }
+
+  #your-turn-text {
+    font-weight: 500;
+  }
+}
