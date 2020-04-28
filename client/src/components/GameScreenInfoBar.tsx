@@ -3,7 +3,7 @@ import { GlobalContext } from '../context/GlobalContext';
 
 
 const GameScreenInfoBar: React.FC = () => {
-  const { canStartGame, isMyTurn, startGame } = useContext( GlobalContext );
+  const { canStartGame, drawCard, isMyTurn, startGame } = useContext( GlobalContext );
 
   return (
     <div id="game-screen-info-bar">
@@ -13,7 +13,13 @@ const GameScreenInfoBar: React.FC = () => {
           Start Game
         </button>
       }
-      {isMyTurn() && <span id="your-turn-text">Your Turn!</span>}
+      {isMyTurn() && (
+        <>
+          <button className="pure-button pure-button-success button-large"
+            onClick={() => drawCard()}>Draw Card!</button>
+          <h2 id="your-turn-text">Your Turn!</h2>
+        </>
+      )}
     </div>
   )
 }

@@ -15,6 +15,7 @@ export interface GlobalState {
 
   // Actions:
   canStartGame: () => boolean;
+  drawCard: () => any;
   isMyTurn: () => any;
   joinRoom: ( name: string, roomCode: string ) => any;
   makeConnection: () => any;

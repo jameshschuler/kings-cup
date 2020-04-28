@@ -19,6 +19,7 @@ const initialState: GlobalState = {
 
   // Actions
   canStartGame: () => false,
+  drawCard: () => { },
   isMyTurn: () => { },
   joinRoom: ( name: string, roomCode: string ) => { },
   makeConnection: () => { },
@@ -38,6 +39,7 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ( { children } ) =>
     initialState
   );
 
+  // Helpers
   const canStartGame = (): boolean => {
     if ( players.length >= 2 && me && !isStarted ) {
       return true;
@@ -55,6 +57,10 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ( { children } ) =>
   }
 
   // Actions:
+  const drawCard = () => {
+    socket?.emit( 'draw-card' );
+  }
+
   const joinRoom = ( name: string, roomCode: string ) => {
     socket?.emit( 'join-room', { name, roomCode } );
 
@@ -66,6 +72,12 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ( { children } ) =>
 
     // Register Events
     if ( socket ) {
+
+      // Card drawn
+      socket.on( 'card-drawn', ( response: any ) => {
+        // TODO: show card response to all players
+        // TODO: only the drawer of the card can close the card display and process to the next player turn
+      } )
 
       // Game Started
       socket.on( 'game-started', ( response: StartedGameResponse ) => {
@@ -123,7 +135,7 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ( { children } ) =>
     <GlobalContext.Provider
       value={{
         connected, currentTurn, isStarted, joining, loading, me, players, socket,
-        canStartGame, isMyTurn, joinRoom, makeConnection, startGame
+        canStartGame, drawCard, isMyTurn, joinRoom, makeConnection, startGame
       }}
     >
       {children}

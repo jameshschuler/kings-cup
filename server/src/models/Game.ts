@@ -1,3 +1,4 @@
+import { Deck } from './Deck';
 import { User } from './User';
 
 export class Game {
@@ -5,6 +6,7 @@ export class Game {
   private _isStarted: boolean = false;
   private _turnOrder: User[] = [];
   private _currentTurn: User | null = null;
+  private _deck: Deck | null = null;
 
   public constructor () {
 
@@ -14,6 +16,7 @@ export class Game {
   public get isStarted(): boolean { return this._isStarted; }
 
   public startGame(): void {
+    this._deck = new Deck();
     this._isStarted = true;
   }
 
