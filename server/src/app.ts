@@ -19,13 +19,40 @@ const init = () => {
   rooms.push( new Room( 'test' ) );
 };
 
+const drawCard = ( socket: socketio.Socket ) => {
+  const user = users.find( u => u.id === socket.id );
+
+  if ( !user ) {
+    // TODO:
+    return;
+  }
+
+  const room = rooms.find( r => r.roomCode === user?.roomCode );
+
+  if ( !room ) {
+    // TODO:
+    return;
+  }
+
+  const response = room.drawCard( user.id );
+
+  io.to( room.roomCode ).emit( 'card-drawn', response );
+}
+
 io.on( 'connection', ( socket: socketio.Socket ) => {
   console.log( 'user connected' );
+
+  /**
+   * Draw Card
+   */
+  socket.on( 'draw-card', () => drawCard( socket ) );
+
 
   /**
    * Start Game
    */
   socket.on( 'start-game', ( request: StartGameRequest ) => {
+    // TODO: validate that requestor socket is in given room
     const storedRoom = rooms.find( r => r.roomCode === request.roomCode );
 
     if ( !storedRoom ) {

@@ -11,6 +11,11 @@ export default ( state: GlobalState, action: Action ): GlobalState => {
         loading: action.payload.loading,
         socket: action.payload.socket,
       };
+    case ActionType.DRAWING_CARD:
+      return {
+        ...state,
+        drawingCard: action.payload.drawingCard
+      }
     case ActionType.GAME_STARTED:
       return {
         ...state,

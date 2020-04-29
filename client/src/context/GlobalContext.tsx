@@ -2,6 +2,7 @@ import React, { createContext, useReducer } from 'react';
 import io from 'socket.io-client';
 import { ActionType } from '../models/constants/ActionType';
 import { GlobalState } from '../models/GlobalState';
+import { DrawnCardResponse } from '../models/response/DrawnCardResponse';
 import { JoinedRoomResponse } from '../models/response/JoinedRoomResponse';
 import { RoomUpdatedResponse } from '../models/response/RoomUpdatedResponse';
 import { StartedGameResponse } from '../models/response/StartedGameResponse';
@@ -10,6 +11,7 @@ import AppReducer from './AppReducer';
 const initialState: GlobalState = {
   connected: false,
   currentTurn: null,
+  drawingCard: false,
   isStarted: false,
   joining: false,
   loading: true,
@@ -34,7 +36,7 @@ interface GlobalProviderProps {
 
 // Provider component
 export const GlobalProvider: React.FC<GlobalProviderProps> = ( { children } ) => {
-  const [ { connected, currentTurn, isStarted, joining, loading, me, players, socket }, dispatch ] = useReducer(
+  const [ { connected, currentTurn, drawingCard, isStarted, joining, loading, me, players, socket }, dispatch ] = useReducer(
     AppReducer,
     initialState
   );
@@ -59,6 +61,13 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ( { children } ) =>
   // Actions:
   const drawCard = () => {
     socket?.emit( 'draw-card' );
+
+    dispatch( {
+      type: ActionType.DRAWING_CARD,
+      payload: {
+        drawingCard: true
+      }
+    } );
   }
 
   const joinRoom = ( name: string, roomCode: string ) => {
@@ -74,9 +83,19 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ( { children } ) =>
     if ( socket ) {
 
       // Card drawn
-      socket.on( 'card-drawn', ( response: any ) => {
+      socket.on( 'card-drawn', ( response: DrawnCardResponse ) => {
+        console.log( 'response', response );
         // TODO: show card response to all players
         // TODO: only the drawer of the card can close the card display and process to the next player turn
+
+        dispatch( {
+          type: ActionType.CARD_DRAWN,
+          payload: {
+            drawingCard: false,
+            drawnCard: response,
+            showDrawnCard: true
+          }
+        } );
       } )
 
       // Game Started
@@ -134,7 +153,7 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ( { children } ) =>
   return (
     <GlobalContext.Provider
       value={{
-        connected, currentTurn, isStarted, joining, loading, me, players, socket,
+        connected, currentTurn, drawingCard, isStarted, joining, loading, me, players, socket,
         canStartGame, drawCard, isMyTurn, joinRoom, makeConnection, startGame
       }}
     >

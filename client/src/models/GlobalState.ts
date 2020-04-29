@@ -7,6 +7,7 @@ export interface GlobalState {
   // State
   connected: boolean;
   currentTurn: User | null;
+  drawingCard: boolean;
   isStarted: boolean;
   joining: boolean;
   loading: boolean;

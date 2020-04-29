@@ -1,3 +1,4 @@
+import { Card } from './Card';
 import { Deck } from './Deck';
 import { User } from './User';
 
@@ -14,6 +15,10 @@ export class Game {
 
   public get currentTurn(): User | null { return this._currentTurn; }
   public get isStarted(): boolean { return this._isStarted; }
+
+  public drawCard(): Card | null {
+    return this._deck!.drawCard();
+  }
 
   public startGame(): void {
     this._deck = new Deck();

@@ -1,4 +1,7 @@
+import { Card } from './Card';
+import { Suit } from './enum/Suit';
 import { Game } from './Game';
+import { DrawnCardResponse } from './response/DrawnCardResponse';
 import { StartedGameResponse } from './response/StartedGameResponse';
 import { UserResponse } from './response/UserResponse';
 import { User } from './User';
@@ -32,11 +35,32 @@ export class Room {
     let newUser = {
       name: storedUser ? `${name}${Math.floor( Math.random() * 100 )}` : name,
       id,
-      roomCode: this._roomCode
+      roomCode: this._roomCode,
+      drawnCards: new Array<Card>()
     } as User;
 
     this._users.push( newUser );
     return newUser;
+  }
+
+  public drawCard( userId: string ): DrawnCardResponse | null {
+    const user = this._users.find( u => u.id === userId );
+
+    if ( !user ) {
+      return null;
+    }
+
+    const card = this._game.drawCard();
+    if ( card ) {
+      user.drawnCards.push( card );
+
+      return {
+        suit: Suit[ card.suit ],
+        value: card?.value
+      } as DrawnCardResponse;
+    }
+
+    return null;
   }
 
   public removeUser( id: string ): void {
