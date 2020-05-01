@@ -6,7 +6,9 @@
 	height: 100%;
 }
 
+@import './purecss/purecss.scss';
 @import './loading-screen.scss';
 @import './info-bar.scss';
 @import './room-code-screen.scss';
 @import './game-screen.scss';
+@import './popup.scss';

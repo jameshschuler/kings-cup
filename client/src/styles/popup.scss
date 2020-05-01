@@ -1,0 +1,52 @@
+.overlay {
+  height: 100%;
+  width: 100%;
+  background-color: rgba(#000000, .5);
+  z-index: 2;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .popup {
+    background-color: #eee;
+    width: 500px;
+    height: 300px;
+    z-index: 3;
+    padding: 1rem;
+    border-radius: .25rem;
+    box-shadow: 2px 2px 2px #000;
+
+    .header {
+      height: 15%;
+
+      h2 {
+        margin: .75rem;
+      }
+    }
+
+    .content {
+      height: 60%;
+    }
+
+    .buttons {
+      height: 25%;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+    }
+  }
+}
+
+#card-popup {
+  .content {
+    #canvas {
+      height: 100%;
+      width: 100%;
+    }
+  }
+}
