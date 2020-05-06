@@ -7,10 +7,10 @@ interface PopupProps {
   show: boolean;
 }
 
+// TODO: when user closes popup, set drawn care to null
+
 const Popup: React.FC<PopupProps> = ( { header, id, content, show } ) => {
   const [ visible, setVisible ] = useState( false );
-
-  // TODO: close button click should update global state?
 
   useEffect( () => {
     setVisible( show );

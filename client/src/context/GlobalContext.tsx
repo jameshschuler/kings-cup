@@ -1,5 +1,6 @@
 import React, { createContext, useReducer } from 'react';
 import io from 'socket.io-client';
+import { CardImage } from '../models/CardImage';
 import { ActionType } from '../models/constants/ActionType';
 import { GlobalState } from '../models/GlobalState';
 import { DrawnCardResponse } from '../models/response/DrawnCardResponse';
@@ -9,9 +10,11 @@ import { StartedGameResponse } from '../models/response/StartedGameResponse';
 import AppReducer from './AppReducer';
 
 const initialState: GlobalState = {
+  cardImages: new Array<CardImage>(),
   connected: false,
   currentTurn: null,
   drawingCard: false,
+  drawnCard: null,
   isStarted: false,
   joining: false,
   loading: true,
@@ -25,7 +28,8 @@ const initialState: GlobalState = {
   isMyTurn: () => { },
   joinRoom: ( name: string, roomCode: string ) => { },
   makeConnection: () => { },
-  startGame: () => { }
+  startGame: () => { },
+  setCardImages: ( cardImages: CardImage[] ) => { }
 };
 
 export const GlobalContext = createContext( initialState );
@@ -36,11 +40,12 @@ interface GlobalProviderProps {
 
 // Provider component
 export const GlobalProvider: React.FC<GlobalProviderProps> = ( { children } ) => {
-  const [ { connected, currentTurn, drawingCard, isStarted, joining, loading, me, players, socket }, dispatch ] = useReducer(
+  const [ { cardImages, connected, currentTurn, drawingCard, drawnCard, isStarted, joining, loading, me, players, socket }, dispatch ] = useReducer(
     AppReducer,
     initialState
   );
 
+  // TODO: move helpers
   // Helpers
   const canStartGame = (): boolean => {
     if ( players.length >= 2 && me && !isStarted ) {
@@ -85,15 +90,11 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ( { children } ) =>
       // Card drawn
       socket.on( 'card-drawn', ( response: DrawnCardResponse ) => {
         console.log( 'response', response );
-        // TODO: show card response to all players
-        // TODO: only the drawer of the card can close the card display and process to the next player turn
 
         dispatch( {
           type: ActionType.CARD_DRAWN,
           payload: {
-            drawingCard: false,
-            drawnCard: response,
-            showDrawnCard: true
+            drawnCard: response
           }
         } );
       } )
@@ -146,6 +147,17 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ( { children } ) =>
     } );
   };
 
+  const setCardImages = ( cardImages: CardImage[] ): void => {
+    console.log( cardImages );
+
+    dispatch( {
+      type: ActionType.SET_CARD_IMAGES,
+      payload: {
+        cardImages
+      }
+    } )
+  }
+
   const startGame = () => {
     socket?.emit( 'start-game', { name: me?.name, roomCode: me?.roomCode } );
   }
@@ -153,8 +165,8 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ( { children } ) =>
   return (
     <GlobalContext.Provider
       value={{
-        connected, currentTurn, drawingCard, isStarted, joining, loading, me, players, socket,
-        canStartGame, drawCard, isMyTurn, joinRoom, makeConnection, startGame
+        cardImages, connected, currentTurn, drawingCard, drawnCard, isStarted, joining, loading, me, players, socket,
+        canStartGame, drawCard, isMyTurn, joinRoom, makeConnection, startGame, setCardImages
       }}
     >
       {children}

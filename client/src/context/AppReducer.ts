@@ -4,6 +4,12 @@ import { GlobalState } from '../models/GlobalState';
 
 export default ( state: GlobalState, action: Action ): GlobalState => {
   switch ( action.type ) {
+    case ActionType.CARD_DRAWN:
+      return {
+        ...state,
+        drawingCard: false,
+        drawnCard: action.payload.drawnCard
+      }
     case ActionType.CONNECTED:
       return {
         ...state,
@@ -37,6 +43,11 @@ export default ( state: GlobalState, action: Action ): GlobalState => {
       return {
         ...state,
         players: action.payload.players
+      }
+    case ActionType.SET_CARD_IMAGES:
+      return {
+        ...state,
+        cardImages: action.payload.cardImages
       }
     default:
       return state;
