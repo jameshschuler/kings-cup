@@ -11,7 +11,7 @@ export class Room {
   private _users: Array<User>;
   private _game: Game;
 
-  public constructor ( roomCode: string ) {
+  public constructor( roomCode: string ) {
     this._roomCode = roomCode;
     this._users = new Array<User>();
     this._game = new Game();

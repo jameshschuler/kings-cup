@@ -9,15 +9,22 @@ import { GlobalContext } from './context/GlobalContext';
 import { CardImage } from './models/CardImage';
 
 const App: React.FC = () => {
-  const { drawnCard, joining, loading, me, makeConnection, setCardImages } = useContext( GlobalContext );
+  const {
+    drawnCard,
+    joining,
+    loading,
+    me,
+    makeConnection,
+    setCardImages,
+  } = useContext(GlobalContext);
 
-  useEffect( () => {
+  useEffect(() => {
     loadImage();
     // TODO: temp
-    setTimeout( () => {
+    setTimeout(() => {
       makeConnection();
-    }, 2000 );
-  }, [] );
+    }, 2000);
+  }, []);
 
   const loadImage = () => {
     // let images = [];
@@ -26,30 +33,29 @@ const App: React.FC = () => {
     image.onload = function () {
       let cols = 13;
       let rows = 5;
-      let spriteWidth = 100;
-      let spriteHeight = 150;
+      let spriteWidth = 98.4;
+      let spriteHeight = 153.2;
 
       let cardImages = new Array<CardImage>();
-      for ( let x = 0; x < rows; x++ ) {
-        for ( let y = 0; y < cols; y++ ) {
-
-          cardImages.push( {
-            suit: getSuit( x ),
-            value: x !== 4 ? getValue( y ) : 'backside',
+      for (let x = 0; x < rows; x++) {
+        for (let y = 0; y < cols; y++) {
+          cardImages.push({
+            suit: getSuit(x),
+            value: x !== 4 ? y.toString() : 'backside',
             width: spriteWidth,
             height: spriteHeight,
-            x: x * spriteWidth,
-            y: y * spriteHeight
-          } as CardImage );
+            x: y * spriteWidth,
+            y: x * spriteHeight,
+          } as CardImage);
         }
       }
 
-      setCardImages( cardImages );
-    }
-  }
+      setCardImages(image, cardImages);
+    };
+  };
 
-  const getSuit = ( row: number ): string => {
-    switch ( row ) {
+  const getSuit = (row: number): string => {
+    switch (row) {
       case 0:
         return 'clubs';
       case 1:
@@ -61,36 +67,19 @@ const App: React.FC = () => {
       default:
         return 'blank';
     }
-  }
-
-  const getValue = ( col: number ): string => {
-    switch ( col ) {
-      case 0:
-        return 'ace';
-      case 11:
-        return 'jack';
-      case 12:
-        return 'queen';
-      case 13:
-        return 'king';
-      default:
-        return ( col += 1 ).toString()
-    }
-  }
+  };
 
   return (
-    <div className='container'>
+    <div className="container">
       <Popup id="card-popup" show={drawnCard !== null} />
       {loading ? (
         <LoadingScreen />
       ) : (
-          <>
-            <InfoBar />
-            {
-              ( !joining && me ) ? ( <GameScreen /> ) : ( <RoomCodeScreen /> )
-            }
-          </>
-        )}
+        <>
+          <InfoBar />
+          {!joining && me ? <GameScreen /> : <RoomCodeScreen />}
+        </>
+      )}
     </div>
   );
 };

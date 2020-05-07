@@ -7,6 +7,7 @@ export interface GlobalState {
   socket: SocketIOClient.Socket | null;
 
   // State
+  cardImage: CanvasImageSource | null;
   cardImages: Array<CardImage>;
   connected: boolean;
   currentTurn: User | null;
@@ -18,12 +19,14 @@ export interface GlobalState {
   me: User | null;
   players: Array<UserResponse>;
 
-  // Actions:
-  canStartGame: () => boolean;
-  drawCard: () => any;
-  isMyTurn: () => any;
+  // Functions (actions and helpers)
+  canStartGame: Function;
+  displayCard: ( canvas: HTMLCanvasElement ) => any;
+  drawCard: Function;
+  endTurn: Function;
+  isMyTurn: Function;
   joinRoom: ( name: string, roomCode: string ) => any;
-  makeConnection: () => any;
-  startGame: () => any;
-  setCardImages: ( cardImages: CardImage[] ) => any;
+  makeConnection: Function;
+  startGame: Function;
+  setCardImages: ( image: CanvasImageSource, cardImages: CardImage[] ) => any;
 }

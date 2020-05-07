@@ -47,6 +47,7 @@ export default ( state: GlobalState, action: Action ): GlobalState => {
     case ActionType.SET_CARD_IMAGES:
       return {
         ...state,
+        cardImage: action.payload.cardImage,
         cardImages: action.payload.cardImages
       }
     default:

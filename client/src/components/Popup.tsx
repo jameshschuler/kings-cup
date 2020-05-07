@@ -1,20 +1,31 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
+import { GlobalContext } from '../context/GlobalContext';
 
 interface PopupProps {
-  header?: string;
-  content?: any;
   id?: string;
   show: boolean;
 }
 
-// TODO: when user closes popup, set drawn care to null
+const Popup: React.FC<PopupProps> = ({ id, show }) => {
+  const { endTurn, displayCard, isMyTurn } = useContext(GlobalContext);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
-const Popup: React.FC<PopupProps> = ( { header, id, content, show } ) => {
-  const [ visible, setVisible ] = useState( false );
+  const [visible, setVisible] = useState(false);
 
-  useEffect( () => {
-    setVisible( show );
-  }, [ show ] );
+  useEffect(() => {
+    setVisible(show);
+
+    if (show) {
+      setTimeout(() => {
+        displayCard(canvasRef.current!);
+      }, 100);
+    }
+  }, [show]);
+
+  const closeDialog = () => {
+    setVisible(false);
+    endTurn();
+  };
 
   return visible ? (
     <div className="overlay">
@@ -23,15 +34,25 @@ const Popup: React.FC<PopupProps> = ( { header, id, content, show } ) => {
           <h2>Hello</h2>
         </div>
         <div className="content">
-          <canvas id="canvas"></canvas>
+          <canvas ref={canvasRef} id="canvas"></canvas>
         </div>
         <div className="buttons">
-          <button className="button-large button-secondary pure-button" id="close-popup-btn"
-            type="button" onClick={() => setVisible( false )}>Close</button>
+          {isMyTurn() && (
+            <button
+              className="button-large button-secondary pure-button"
+              id="close-popup-btn"
+              type="button"
+              onClick={() => closeDialog()}
+            >
+              Close
+            </button>
+          )}
         </div>
       </div>
     </div>
-  ) : ( <></> );
-}
+  ) : (
+    <></>
+  );
+};
 
 export default Popup;

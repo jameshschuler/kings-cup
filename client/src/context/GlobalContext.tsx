@@ -10,6 +10,7 @@ import { StartedGameResponse } from '../models/response/StartedGameResponse';
 import AppReducer from './AppReducer';
 
 const initialState: GlobalState = {
+  cardImage: null,
   cardImages: new Array<CardImage>(),
   connected: false,
   currentTurn: null,
@@ -22,151 +23,226 @@ const initialState: GlobalState = {
   players: [],
   socket: null,
 
-  // Actions
-  canStartGame: () => false,
-  drawCard: () => { },
-  isMyTurn: () => { },
-  joinRoom: ( name: string, roomCode: string ) => { },
-  makeConnection: () => { },
-  startGame: () => { },
-  setCardImages: ( cardImages: CardImage[] ) => { }
+  /// Functions (actions and helpers)
+  canStartGame: Function,
+  displayCard: (canvas: HTMLCanvasElement) => {},
+  drawCard: Function,
+  endTurn: Function,
+  isMyTurn: Function,
+  joinRoom: (name: string, roomCode: string) => {},
+  makeConnection: Function,
+  startGame: Function,
+  setCardImages: (image: CanvasImageSource, cardImages: CardImage[]) => {},
 };
 
-export const GlobalContext = createContext( initialState );
+export const GlobalContext = createContext(initialState);
 
 interface GlobalProviderProps {
   children: any;
 }
 
 // Provider component
-export const GlobalProvider: React.FC<GlobalProviderProps> = ( { children } ) => {
-  const [ { cardImages, connected, currentTurn, drawingCard, drawnCard, isStarted, joining, loading, me, players, socket }, dispatch ] = useReducer(
-    AppReducer,
-    initialState
-  );
+export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
+  const [
+    {
+      cardImage,
+      cardImages,
+      connected,
+      currentTurn,
+      drawingCard,
+      drawnCard,
+      isStarted,
+      joining,
+      loading,
+      me,
+      players,
+      socket,
+    },
+    dispatch,
+  ] = useReducer(AppReducer, initialState);
 
   // TODO: move helpers
   // Helpers
   const canStartGame = (): boolean => {
-    if ( players.length >= 2 && me && !isStarted ) {
+    if (players.length >= 2 && me && !isStarted) {
       return true;
     }
 
     return false;
-  }
+  };
 
   const isMyTurn = (): boolean => {
-    if ( me && currentTurn ) {
+    if (me && currentTurn) {
       return me.name === currentTurn.name;
     }
 
     return false;
-  }
+  };
+
+  const displayCard = (canvas: HTMLCanvasElement) => {
+    if (drawnCard) {
+      const cardToDraw = cardImages.find(
+        (c) =>
+          c.suit.toLowerCase() === drawnCard!.suit.toLowerCase() &&
+          c.value.toLowerCase() === drawnCard!.value.toLowerCase()
+      );
+
+      if (cardToDraw) {
+        const context = canvas.getContext('2d');
+        context?.drawImage(
+          cardImage!,
+          cardToDraw.x,
+          cardToDraw.y,
+          cardToDraw.width,
+          cardToDraw.height,
+          0,
+          0,
+          canvas.width,
+          canvas.height
+        );
+      }
+    }
+  };
 
   // Actions:
   const drawCard = () => {
-    socket?.emit( 'draw-card' );
+    socket?.emit('draw-card');
 
-    dispatch( {
+    dispatch({
       type: ActionType.DRAWING_CARD,
       payload: {
-        drawingCard: true
-      }
-    } );
-  }
+        drawingCard: true,
+      },
+    });
+  };
 
-  const joinRoom = ( name: string, roomCode: string ) => {
-    socket?.emit( 'join-room', { name, roomCode } );
+  const endTurn = () => {
+    // TODO: send request to end turn and set next users turn
 
-    dispatch( { type: ActionType.JOINING, payload: { joining: true } } );
+    dispatch({
+      type: ActionType.END_TURN,
+      payload: {
+        drawnCard: null,
+        // TODO: currentTurn:
+      },
+    });
+  };
+
+  const joinRoom = (name: string, roomCode: string) => {
+    socket?.emit('join-room', { name, roomCode });
+
+    dispatch({ type: ActionType.JOINING, payload: { joining: true } });
   };
 
   const makeConnection = (): void => {
-    const socket = io( 'http://localhost:5000' );
+    const socket = io('http://localhost:5000');
 
     // Register Events
-    if ( socket ) {
-
+    if (socket) {
       // Card drawn
-      socket.on( 'card-drawn', ( response: DrawnCardResponse ) => {
-        console.log( 'response', response );
+      socket.on('card-drawn', (response: DrawnCardResponse) => {
+        console.log('response', response);
 
-        dispatch( {
+        dispatch({
           type: ActionType.CARD_DRAWN,
           payload: {
-            drawnCard: response
-          }
-        } );
-      } )
+            drawnCard: response,
+          },
+        });
+      });
 
       // Game Started
-      socket.on( 'game-started', ( response: StartedGameResponse ) => {
-        console.log( "game-started", response );
+      socket.on('game-started', (response: StartedGameResponse) => {
+        console.log('game-started', response);
 
-        dispatch( {
+        dispatch({
           type: ActionType.GAME_STARTED,
           payload: {
             currentTurn: response.currentTurn,
             isStarted: response.isStarted,
-          }
-        } );
-      } );
+          },
+        });
+      });
 
       // Room Updated
-      socket.on( 'room-updated', ( response: RoomUpdatedResponse ) => {
-        console.log( 'room-updated response', response );
-        dispatch( {
+      socket.on('room-updated', (response: RoomUpdatedResponse) => {
+        console.log('room-updated response', response);
+        dispatch({
           type: ActionType.ROOM_UPDATED,
           payload: {
-            players: response
-          }
-        } )
-      } );
+            players: response,
+          },
+        });
+      });
 
       // Joined Room
-      socket.on( 'joined-room', ( response: JoinedRoomResponse ) => {
-        console.log( 'joined-room response', response );
+      socket.on('joined-room', (response: JoinedRoomResponse) => {
+        console.log('joined-room response', response);
 
-        dispatch( {
+        dispatch({
           type: ActionType.JOINED_ROOM,
           payload: {
             joining: false,
-            response
-          }
-        } );
-      } );
+            response,
+          },
+        });
+      });
     }
 
-    dispatch( {
+    dispatch({
       type: ActionType.CONNECTED,
       payload: {
         socket,
         connected: socket !== null,
         loading: false,
       },
-    } );
+    });
   };
 
-  const setCardImages = ( cardImages: CardImage[] ): void => {
-    console.log( cardImages );
+  const setCardImages = (
+    image: CanvasImageSource,
+    cardImages: CardImage[]
+  ): void => {
+    console.log(cardImages);
 
-    dispatch( {
+    dispatch({
       type: ActionType.SET_CARD_IMAGES,
       payload: {
-        cardImages
-      }
-    } )
-  }
+        cardImage: image,
+        cardImages,
+      },
+    });
+  };
 
   const startGame = () => {
-    socket?.emit( 'start-game', { name: me?.name, roomCode: me?.roomCode } );
-  }
+    socket?.emit('start-game', { name: me?.name, roomCode: me?.roomCode });
+  };
 
   return (
     <GlobalContext.Provider
       value={{
-        cardImages, connected, currentTurn, drawingCard, drawnCard, isStarted, joining, loading, me, players, socket,
-        canStartGame, drawCard, isMyTurn, joinRoom, makeConnection, startGame, setCardImages
+        cardImage,
+        cardImages,
+        connected,
+        currentTurn,
+        drawingCard,
+        drawnCard,
+        isStarted,
+        joining,
+        loading,
+        me,
+        players,
+        socket,
+        // Functions (actions and helpers)
+        canStartGame,
+        drawCard,
+        displayCard,
+        endTurn,
+        isMyTurn,
+        joinRoom,
+        makeConnection,
+        startGame,
+        setCardImages,
       }}
     >
       {children}
