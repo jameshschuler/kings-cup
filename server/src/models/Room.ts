@@ -12,7 +12,7 @@ export class Room {
   private _users: Array<User>;
   private _game: Game;
 
-  public constructor( roomCode: string ) {
+  public constructor ( roomCode: string ) {
     this._roomCode = roomCode;
     this._users = new Array<User>();
     this._game = new Game();
@@ -25,11 +25,16 @@ export class Room {
       return { id: index, icon: 'fas fa-ghost', name: u.name }
     } );
 
-
+    // TODO: send back random character icon
     // TODO: make sure list is in same order for every player... maybe sort by alpha
     return response;
   }
 
+  /**
+   * 
+   * @param id 
+   * @param name 
+   */
   public addUser( id: string, name: string ): User {
     const storedUser = this._users.find( u => u.name === name );
 
@@ -44,6 +49,10 @@ export class Room {
     return newUser;
   }
 
+  /**
+   * 
+   * @param userId 
+   */
   public drawCard( userId: string ): DrawnCardResponse | null {
     const user = this._users.find( u => u.id === userId );
 
@@ -52,18 +61,18 @@ export class Room {
     }
 
     const card = this._game.drawCard();
-    if ( card ) {
-      user.drawnCards.push( card );
+    user.drawnCards.push( card );
 
-      return {
-        suit: Suit[ card.suit ],
-        value: card?.value
-      } as DrawnCardResponse;
-    }
-
-    return null;
+    return {
+      suit: Suit[ card.suit ],
+      value: card?.value,
+      kingCount: this._game.kingCount
+    } as DrawnCardResponse;
   }
 
+  /**
+   * 
+   */
   public endTurn(): EndTurnResponse {
     const currentTurn = this._game.endTurn();
 
@@ -72,10 +81,17 @@ export class Room {
     } as EndTurnResponse;
   }
 
+  /**
+   * 
+   * @param id 
+   */
   public removeUser( id: string ): void {
     this._users = this._users.filter( u => u.id !== id );
   }
 
+  /**
+   * 
+   */
   public startGame(): StartedGameResponse {
     this._game.turnOrder = this._users;
     this._game.startGame();

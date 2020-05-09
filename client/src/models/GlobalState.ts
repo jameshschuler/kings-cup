@@ -15,6 +15,7 @@ export interface GlobalState {
   drawnCard: DrawnCardResponse | null;
   isStarted: boolean;
   joining: boolean;
+  kingCount: number;
   loading: boolean;
   me: User | null;
   players: Array<UserResponse>;

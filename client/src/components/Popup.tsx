@@ -6,32 +6,30 @@ interface PopupProps {
   show: boolean;
 }
 
-const Popup: React.FC<PopupProps> = ({ id, show }) => {
-  const { endTurn, displayCard, isMyTurn } = useContext(GlobalContext);
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+const Popup: React.FC<PopupProps> = ( { id, show } ) => {
+  const { drawnCard, endTurn, displayCard, isMyTurn } = useContext( GlobalContext );
+  const canvasRef = useRef<HTMLCanvasElement | null>( null );
 
-  const [visible, setVisible] = useState(false);
+  const [ visible, setVisible ] = useState( false );
 
-  useEffect(() => {
-    setVisible(show);
+  useEffect( () => {
+    setVisible( show );
 
-    if (show) {
-      setTimeout(() => {
-        displayCard(canvasRef.current!);
-      }, 100);
+    if ( show ) {
+      displayCard( canvasRef.current! );
     }
-  }, [show]);
+  }, [ show ] );
 
   const closeDialog = () => {
-    setVisible(false);
+    setVisible( false );
     endTurn();
   };
 
-  return visible ? (
-    <div className="overlay">
+  return (
+    <div className={`overlay ${!visible ? 'hidden' : ''}`}>
       <div className="popup" id={id}>
         <div className="header">
-          <h2>Hello</h2>
+          <h2>TODO: add rule here</h2>
         </div>
         <div className="content">
           <canvas ref={canvasRef} id="canvas"></canvas>
@@ -50,8 +48,6 @@ const Popup: React.FC<PopupProps> = ({ id, show }) => {
         </div>
       </div>
     </div>
-  ) : (
-    <></>
   );
 };
 

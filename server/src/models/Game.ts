@@ -9,19 +9,22 @@ export class Game {
   private _currentTurn: User | null = null;
   private _deck: Deck | null = null;
   private _drawnCards: Array<Card> = [];
+  private _kingCount: number = 0;
 
-  public constructor() { }
+  public constructor () { }
 
   public get currentTurn(): User | null { return this._currentTurn; }
   public get isStarted(): boolean { return this._isStarted; }
+  public get kingCount(): number { return this._kingCount; }
 
-  public drawCard(): Card | null {
+  public drawCard(): Card {
     const drawnCard = this._deck!.drawCard();
 
-    if ( drawnCard ) {
-      this._drawnCards.push( drawnCard );
+    if ( drawnCard.value === 'King' ) {
+      this._kingCount += 1;
     }
 
+    this._drawnCards.push( drawnCard );
     return drawnCard;
   }
 

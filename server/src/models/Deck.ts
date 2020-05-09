@@ -5,15 +5,13 @@ export class Deck {
   private _values = [ '2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace' ];
   private _suitValues = [ 1, 2, 3, 4 ];
 
-  public constructor() {
+  public constructor () {
     this.generateCards();
     this.shuffle();
   }
 
-  public drawCard(): Card | null {
-    const drawnCard = this._cards.pop();
-
-    return drawnCard || null;
+  public drawCard(): Card {
+    return this._cards.pop()!;
   }
 
   private generateCards(): void {

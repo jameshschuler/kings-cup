@@ -8,7 +8,8 @@ export default ( state: GlobalState, action: Action ): GlobalState => {
       return {
         ...state,
         drawingCard: false,
-        drawnCard: action.payload.drawnCard
+        drawnCard: action.payload.drawnCard,
+        kingCount: action.payload.kingCount
       }
     case ActionType.CONNECTED:
       return {
@@ -53,7 +54,6 @@ export default ( state: GlobalState, action: Action ): GlobalState => {
     case ActionType.TURN_ENDED:
       return {
         ...state,
-        cardImage: action.payload.cardImage,
         drawnCard: action.payload.drawnCard,
         currentTurn: action.payload.currentTurn
       }

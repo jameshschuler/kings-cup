@@ -20,7 +20,6 @@ const init = () => {
 };
 
 const endTurn = ( socket: socketio.Socket ) => {
-  console.log( "end turn" );
   const user = users.find( u => u.id === socket.id );
 
   if ( !user ) {
@@ -43,7 +42,7 @@ const drawCard = ( socket: socketio.Socket ) => {
   const user = users.find( u => u.id === socket.id );
 
   if ( !user ) {
-    // TODO:
+    // TODO: the user might have left?
     return;
   }
 

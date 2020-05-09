@@ -4,35 +4,45 @@ import { GlobalContext } from '../context/GlobalContext';
 const GameScreenInfoBar: React.FC = () => {
   const {
     canStartGame,
+    currentTurn,
     drawingCard,
     drawCard,
     isMyTurn,
     startGame,
-  } = useContext(GlobalContext);
+  } = useContext( GlobalContext );
 
   return (
     <div id="game-screen-info-bar">
-      {canStartGame() && (
-        <button
-          className="pure-button pure-button-primary button-large"
-          id="start-game-btn"
-          onClick={() => startGame()}
-        >
-          Start Game
-        </button>
-      )}
-      {isMyTurn() && (
-        <>
+      {
+        currentTurn && (
+          <span id="current-turn">
+            Currently {currentTurn?.name}'s Turn!
+          </span>
+        )
+      }
+      <div id="buttons">
+        {canStartGame() && (
           <button
             className="pure-button pure-button-primary button-large"
-            id="draw-card-btn"
-            onClick={() => drawCard()}
+            id="start-game-btn"
+            onClick={() => startGame()}
           >
-            {drawingCard ? 'Drawing...' : 'Draw Card'}
+            Start Game
           </button>
-          <h2 id="your-turn-text">Your Turn!</h2>
-        </>
-      )}
+        )}
+        {isMyTurn() && (
+          <>
+            <button
+              className="pure-button pure-button-primary button-large"
+              id="draw-card-btn"
+              disabled={drawingCard}
+              onClick={() => drawCard()}
+            >
+              {drawingCard ? 'Drawing...' : 'Draw Card'}
+            </button>
+          </>
+        )}
+      </div>
     </div>
   );
 };
