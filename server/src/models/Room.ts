@@ -2,6 +2,7 @@ import { Card } from './Card';
 import { Suit } from './enum/Suit';
 import { Game } from './Game';
 import { DrawnCardResponse } from './response/DrawnCardResponse';
+import { EndTurnResponse } from './response/EndTurnResponse';
 import { StartedGameResponse } from './response/StartedGameResponse';
 import { UserResponse } from './response/UserResponse';
 import { User } from './User';
@@ -61,6 +62,14 @@ export class Room {
     }
 
     return null;
+  }
+
+  public endTurn(): EndTurnResponse {
+    const currentTurn = this._game.endTurn();
+
+    return {
+      currentTurn
+    } as EndTurnResponse;
   }
 
   public removeUser( id: string ): void {

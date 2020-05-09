@@ -50,6 +50,13 @@ export default ( state: GlobalState, action: Action ): GlobalState => {
         cardImage: action.payload.cardImage,
         cardImages: action.payload.cardImages
       }
+    case ActionType.TURN_ENDED:
+      return {
+        ...state,
+        cardImage: action.payload.cardImage,
+        drawnCard: action.payload.drawnCard,
+        currentTurn: action.payload.currentTurn
+      }
     default:
       return state;
   }

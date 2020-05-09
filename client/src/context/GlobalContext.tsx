@@ -4,6 +4,7 @@ import { CardImage } from '../models/CardImage';
 import { ActionType } from '../models/constants/ActionType';
 import { GlobalState } from '../models/GlobalState';
 import { DrawnCardResponse } from '../models/response/DrawnCardResponse';
+import { EndTurnResponse } from '../models/response/EndTurnResponse';
 import { JoinedRoomResponse } from '../models/response/JoinedRoomResponse';
 import { RoomUpdatedResponse } from '../models/response/RoomUpdatedResponse';
 import { StartedGameResponse } from '../models/response/StartedGameResponse';
@@ -117,15 +118,7 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
   };
 
   const endTurn = () => {
-    // TODO: send request to end turn and set next users turn
-
-    dispatch({
-      type: ActionType.END_TURN,
-      payload: {
-        drawnCard: null,
-        // TODO: currentTurn:
-      },
-    });
+    socket?.emit('end-turn');
   };
 
   const joinRoom = (name: string, roomCode: string) => {
@@ -184,6 +177,19 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
           payload: {
             joining: false,
             response,
+          },
+        });
+      });
+
+      socket.on('turn-ended', (response: EndTurnResponse) => {
+        console.log('response', response);
+
+        dispatch({
+          type: ActionType.TURN_ENDED,
+          payload: {
+            cardImage: null,
+            currentTurn: response.currentTurn,
+            drawnCard: null,
           },
         });
       });

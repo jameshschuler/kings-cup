@@ -19,6 +19,26 @@ const init = () => {
   rooms.push( new Room( 'test' ) );
 };
 
+const endTurn = ( socket: socketio.Socket ) => {
+  console.log( "end turn" );
+  const user = users.find( u => u.id === socket.id );
+
+  if ( !user ) {
+    // TODO:
+    return;
+  }
+
+  const room = rooms.find( r => r.roomCode === user?.roomCode );
+
+  if ( !room ) {
+    // TODO:
+    return;
+  }
+
+  const response = room.endTurn();
+  io.to( room.roomCode ).emit( 'turn-ended', response );
+}
+
 const drawCard = ( socket: socketio.Socket ) => {
   const user = users.find( u => u.id === socket.id );
 
@@ -47,6 +67,10 @@ io.on( 'connection', ( socket: socketio.Socket ) => {
    */
   socket.on( 'draw-card', () => drawCard( socket ) );
 
+  /**
+   * End Turn
+   */
+  socket.on( 'end-turn', () => endTurn( socket ) );
 
   /**
    * Start Game

@@ -8,16 +8,35 @@ export class Game {
   private _turnOrder: User[] = [];
   private _currentTurn: User | null = null;
   private _deck: Deck | null = null;
+  private _drawnCards: Array<Card> = [];
 
-  public constructor () {
-
-  }
+  public constructor() { }
 
   public get currentTurn(): User | null { return this._currentTurn; }
   public get isStarted(): boolean { return this._isStarted; }
 
   public drawCard(): Card | null {
-    return this._deck!.drawCard();
+    const drawnCard = this._deck!.drawCard();
+
+    if ( drawnCard ) {
+      this._drawnCards.push( drawnCard );
+    }
+
+    return drawnCard;
+  }
+
+  public endTurn(): User | null {
+    let index = this._turnOrder.indexOf( this._currentTurn! );
+
+    const next = index += 1;
+
+    if ( next < this._turnOrder.length ) {
+      this._currentTurn = this._turnOrder[ next ];
+    } else {
+      this._currentTurn = this._turnOrder[ 0 ];
+    }
+
+    return this.currentTurn || null;
   }
 
   public startGame(): void {

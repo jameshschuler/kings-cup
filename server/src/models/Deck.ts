@@ -2,7 +2,6 @@ import { Card } from './Card';
 
 export class Deck {
   private _cards: Array<Card> = [];
-  private _drawnCards: Array<Card> = [];
   private _values = [ '2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace' ];
   private _suitValues = [ 1, 2, 3, 4 ];
 
@@ -14,12 +13,7 @@ export class Deck {
   public drawCard(): Card | null {
     const drawnCard = this._cards.pop();
 
-    if ( drawnCard ) {
-      this._drawnCards.push( drawnCard );
-      return drawnCard;
-    }
-
-    return null;
+    return drawnCard || null;
   }
 
   private generateCards(): void {
