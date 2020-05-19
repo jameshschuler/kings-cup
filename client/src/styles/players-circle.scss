@@ -1,0 +1,42 @@
+#players-circle {
+  background-color: saddlebrown;
+  border: 2px solid #000;
+  box-shadow: 3px 3px 3px #000;
+  height: 575px;
+  width: 800px;
+  margin: 2rem auto 0 auto;
+  border-radius: 50%;
+  position: relative;
+
+  .player {
+    background-color: #eee;
+    border: 2px solid #000;
+    box-shadow: 2px 2px 2px #000;
+    height: 50px;
+    width: 200px;
+    position: absolute;
+    top: 45%;
+    left: 35%;
+
+    .player-info {
+      display: flex;
+      height: 100%;
+      align-items: center;
+
+      .player-icon {
+        background-color: lightgrey;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 30%;
+        border-right: 2px solid #000;
+        height: 100%;
+      }
+
+      .player-name {
+        font-size: 1.25rem;
+        padding-left: .5rem;
+      }
+    }
+  }
+}

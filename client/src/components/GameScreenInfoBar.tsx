@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { GlobalContext } from '../context/GlobalContext';
 
 const GameScreenInfoBar: React.FC = () => {
@@ -8,40 +8,51 @@ const GameScreenInfoBar: React.FC = () => {
     drawingCard,
     drawCard,
     isMyTurn,
+    isStarted,
     startGame,
   } = useContext( GlobalContext );
 
+  const drawCardButton = (
+    <button
+      className="pure-button pure-button-primary button-xlarge"
+      id="draw-card-btn"
+      disabled={drawingCard}
+      onClick={() => drawCard()}
+    >
+      {drawingCard ? 'Drawing...' : 'Draw Card'}
+    </button>
+  );
+
+  const startGameButton = (
+    <button
+      className="pure-button pure-button-primary button-xlarge"
+      id="start-game-btn"
+      onClick={() => startGame()}
+    >
+      Start Game
+    </button>
+  );
+
+  const [ content, setContent ] = useState<JSX.Element>();
+
+  useEffect( () => {
+    if ( canStartGame() ) {
+      setContent( startGameButton );
+    } else if ( isStarted ) {
+      if ( isMyTurn() ) {
+        setContent( drawCardButton )
+      } else {
+        setContent( <span id='whose-turn'>It's {currentTurn?.name}'s turn!</span> )
+      }
+    } else {
+      setContent( <span>Welcome!</span> )
+    }
+  }, [ isStarted, canStartGame, isMyTurn ] );
+
   return (
     <div id="game-screen-info-bar">
-      {
-        currentTurn && (
-          <span id="current-turn">
-            Currently {currentTurn?.name}'s Turn!
-          </span>
-        )
-      }
       <div id="buttons">
-        {canStartGame() && (
-          <button
-            className="pure-button pure-button-primary button-large"
-            id="start-game-btn"
-            onClick={() => startGame()}
-          >
-            Start Game
-          </button>
-        )}
-        {isMyTurn() && (
-          <>
-            <button
-              className="pure-button pure-button-primary button-large"
-              id="draw-card-btn"
-              disabled={drawingCard}
-              onClick={() => drawCard()}
-            >
-              {drawingCard ? 'Drawing...' : 'Draw Card'}
-            </button>
-          </>
-        )}
+        {content}
       </div>
     </div>
   );

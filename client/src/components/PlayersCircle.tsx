@@ -17,12 +17,7 @@ const PlayersCircle = () => {
             }}>
             <div className="player-info">
               <span className='player-icon'><i className={`${player.icon} fa-2x fa-fw`}></i></span>
-              <div className="name-and-cards">
-                <span className="player-name">{player.name}</span>
-                <div className="drawn-cards">
-                  <div className="card"></div>
-                </div>
-              </div>
+              <span className="player-name">{player.name}</span>
             </div>
 
           </div>

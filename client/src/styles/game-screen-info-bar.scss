@@ -1,12 +1,12 @@
 #game-screen-info-bar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   height: 55px;
   padding: .5rem;
+  border-bottom: 2px solid grey;
 
-  #current-turn {
+  span {
     font-size: 1.5rem;
-    font-weight: bold;
   }
 }
