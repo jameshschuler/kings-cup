@@ -13,11 +13,13 @@ export interface GlobalState {
   currentTurn: User | null;
   drawingCard: boolean;
   drawnCard: DrawnCardResponse | null;
+  isGameOver: boolean;
   isStarted: boolean;
   joining: boolean;
   kingCount: number;
   loading: boolean;
   me: User | null;
+  message: string;
   players: Array<UserResponse>;
 
   // Functions (actions and helpers)

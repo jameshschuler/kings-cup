@@ -66,7 +66,8 @@ export class Room {
     return {
       suit: Suit[ card.suit ],
       value: card?.value,
-      kingCount: this._game.kingCount
+      kingCount: this._game.kingCount,
+      isGameOver: this._game.isGameOver
     } as DrawnCardResponse;
   }
 

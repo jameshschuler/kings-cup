@@ -17,11 +17,13 @@ const initialState: GlobalState = {
   currentTurn: null,
   drawingCard: false,
   drawnCard: null,
+  isGameOver: false,
   isStarted: false,
   joining: false,
   kingCount: 0,
   loading: true,
   me: null,
+  message: 'Loading...',
   players: [],
   socket: null,
 
@@ -53,11 +55,13 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ( { children } ) =>
       currentTurn,
       drawingCard,
       drawnCard,
+      isGameOver,
       isStarted,
       joining,
       kingCount,
       loading,
       me,
+      message,
       players,
       socket,
     },
@@ -130,7 +134,32 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ( { children } ) =>
   };
 
   const makeConnection = (): void => {
-    const socket = io( 'http://localhost:5000' );
+    const socket = io( 'http://localhost:5000', { reconnectionAttempts: 5 } );
+
+    socket.on( 'connect', () => {
+      dispatch( {
+        type: ActionType.CONNECTED,
+        payload: {
+          socket,
+          connected: socket !== null,
+          loading: false,
+        },
+      } );
+    } );
+
+    socket.on( 'connect_error', ( error: any ) => {
+      // TODO: show message that client was unable to connect but is trying again
+      console.log( 'Unable to connect. Trying again...', { ...error } );
+    } );
+
+    socket.on( 'reconnect_failed', () => {
+      dispatch( {
+        type: ActionType.CONNECTION_FAILED,
+        payload: {
+          message: 'Failed to connect. Try again later!'
+        }
+      } );
+    } );
 
     // Register Events
     if ( socket ) {
@@ -140,7 +169,8 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ( { children } ) =>
           type: ActionType.CARD_DRAWN,
           payload: {
             drawnCard: response,
-            kingCount: response.kingCount
+            kingCount: response.kingCount,
+            isGameOver: response.isGameOver
           },
         } );
       } );
@@ -187,15 +217,6 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ( { children } ) =>
         } );
       } );
     }
-
-    dispatch( {
-      type: ActionType.CONNECTED,
-      payload: {
-        socket,
-        connected: socket !== null,
-        loading: false,
-      },
-    } );
   };
 
   const setCardImages = (
@@ -226,11 +247,13 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ( { children } ) =>
         currentTurn,
         drawingCard,
         drawnCard,
+        isGameOver,
         isStarted,
         joining,
         kingCount,
         loading,
         me,
+        message,
         players,
         socket,
         // Functions (actions and helpers)

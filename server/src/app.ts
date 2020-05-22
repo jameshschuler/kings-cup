@@ -6,77 +6,162 @@ import { StartGameRequest } from './models/request/StartGameRequest';
 import { Room } from './models/Room';
 import { User } from './models/User';
 
-const PORT = process.env.PORT || 5000;
+( function () {
+  const app = new App( process.env.PORT! );
+}() );
 
-const app = express();
-const server = http.createServer( app );
-const io = socketio( server );
+/**
+ * 
+ */
+class App {
+  private _app: any;
+  private _port: number;
+  private _server: any;
+  private _io: socketio.Server;
+  private _users = new Array<User>();
+  private _rooms = new Array<Room>();
 
-let users = new Array<User>();
-const rooms = new Array<Room>();
+  constructor ( port: string ) {
+    this._port = parseInt( port ) || 5000;
 
-const init = () => {
-  rooms.push( new Room( 'test' ) );
-};
+    this._app = express();
+    this._server = http.createServer( this._app );
+    this._io = socketio( this._server );
 
-const endTurn = ( socket: socketio.Socket ) => {
-  const user = users.find( u => u.id === socket.id );
-
-  if ( !user ) {
-    // TODO:
-    return;
+    this._server.listen( this._port, () => {
+      this.init();
+      this.registerEvents();
+      console.log( `Server started on port: ${this._port}` );
+    } );
   }
-
-  const room = rooms.find( r => r.roomCode === user?.roomCode );
-
-  if ( !room ) {
-    // TODO:
-    return;
-  }
-
-  const response = room.endTurn();
-  io.to( room.roomCode ).emit( 'turn-ended', response );
-}
-
-const drawCard = ( socket: socketio.Socket ) => {
-  const user = users.find( u => u.id === socket.id );
-
-  if ( !user ) {
-    // TODO: the user might have left?
-    return;
-  }
-
-  const room = rooms.find( r => r.roomCode === user?.roomCode );
-
-  if ( !room ) {
-    // TODO:
-    return;
-  }
-
-  const response = room.drawCard( user.id );
-
-  io.to( room.roomCode ).emit( 'card-drawn', response );
-}
-
-io.on( 'connection', ( socket: socketio.Socket ) => {
-  console.log( 'user connected' );
 
   /**
-   * Draw Card
+   * 
+   * @param socket 
    */
-  socket.on( 'draw-card', () => drawCard( socket ) );
+  private disconnect( socket: socketio.Socket ) {
+    const storedUser = this.getUserById( socket.id );
+
+    if ( storedUser ) {
+      this._users = this._users.filter( u => u.id !== storedUser.id );
+      const room = this.getRoom( storedUser.roomCode );
+
+      if ( room ) {
+        room.removeUser( storedUser.id );
+
+        this._io.to( storedUser.roomCode ).emit( 'room-updated', room.users );
+      }
+    }
+  }
 
   /**
-   * End Turn
+   * 
+   * @param socket 
    */
-  socket.on( 'end-turn', () => endTurn( socket ) );
+  private drawCard( socket: socketio.Socket ) {
+    const user = this.getUserById( socket.id );
+
+    if ( !user ) {
+      // TODO: the user might have left?
+      return;
+    }
+
+    const room = this.getRoom( user?.roomCode );
+
+    if ( !room ) {
+      // TODO:
+      return;
+    }
+
+    const response = room.drawCard( user.id );
+
+    this._io.to( room.roomCode ).emit( 'card-drawn', response );
+  }
 
   /**
-   * Start Game
+   * 
+   * @param socket 
    */
-  socket.on( 'start-game', ( request: StartGameRequest ) => {
+  private endTurn( socket: socketio.Socket ): void {
+    const user = this.getUserById( socket.id );
+
+    if ( !user ) {
+      // TODO:
+      return;
+    }
+
+    const room = this.getRoom( user.roomCode );
+
+    if ( !room ) {
+      // TODO:
+      return;
+    }
+
+    const response = room.endTurn();
+    this._io.to( room.roomCode ).emit( 'turn-ended', response );
+  }
+
+  private getRoom( roomCode: string ): Room | null {
+    return this._rooms.find( r => r.roomCode === roomCode ) || null;
+  }
+
+  private getUserById( id: string ): User | null {
+    return this._users.find( u => u.id === id ) || null;
+  }
+
+  // TODO: this is temporary for testing
+  private init(): void {
+    this._rooms.push( new Room( 'test' ) );
+  }
+
+  /**
+   * 
+   * @param request 
+   * @param socket 
+   */
+  private joinRoom( request: JoinRoomRequest, socket: SocketIO.Socket ) {
+    if ( !request ) {
+      // TODO: handle request being null
+    }
+
+    let storedRoom = this.getRoom( request.roomCode );
+
+    if ( !storedRoom ) {
+      storedRoom = new Room( request.roomCode );
+      this._rooms.push( storedRoom );
+    }
+
+    const user = storedRoom.addUser( socket.id, request.name.trim() );
+
+    this._users.push( user );
+
+    socket.join( request.roomCode );
+
+    socket.emit( 'joined-room', { name: user.name, roomCode: user.roomCode } );
+    this._io.to( request.roomCode ).emit( 'room-updated', storedRoom.users );
+  }
+
+  /**
+   * 
+   */
+  private registerEvents(): void {
+    this._io.on( 'connection', ( socket: socketio.Socket ) => {
+
+      socket.on( 'draw-card', () => this.drawCard( socket ) );
+      socket.on( 'end-turn', () => this.endTurn( socket ) );
+      socket.on( 'start-game', ( request: StartGameRequest ) => this.startGame( request ) );
+      socket.on( 'join-room', ( request: JoinRoomRequest ) => this.joinRoom( request, socket ) );
+      socket.on( 'disconnect', ( roomCode: string ) => this.disconnect( socket ) );
+    } );
+  }
+
+  /**
+   * 
+   * @param request 
+   */
+  private startGame( request: StartGameRequest ): void {
     // TODO: validate that requestor socket is in given room
-    const storedRoom = rooms.find( r => r.roomCode === request.roomCode );
+    const storedRoom = this.getRoom( request.roomCode );
 
     if ( !storedRoom ) {
       // TODO: handle invalid room
@@ -84,48 +169,6 @@ io.on( 'connection', ( socket: socketio.Socket ) => {
 
     const startedGameResponse = storedRoom!.startGame();
 
-    io.to( request.roomCode ).emit( 'game-started', startedGameResponse );
-  } )
-
-  socket.on( 'join-room', ( request: JoinRoomRequest ) => {
-    if ( !request ) {
-      // TODO: handle request being null
-    }
-
-    let storedRoom = rooms.find( r => r.roomCode === request.roomCode );
-
-    if ( !storedRoom ) {
-      storedRoom = new Room( request.roomCode );
-      rooms.push( storedRoom );
-    }
-
-    const user = storedRoom.addUser( socket.id, request.name.trim() );
-
-    users.push( user );
-
-    socket.join( request.roomCode );
-
-    socket.emit( 'joined-room', { name: user.name, roomCode: user.roomCode } );
-    io.to( request.roomCode ).emit( 'room-updated', storedRoom.users );
-  } );
-
-  socket.on( 'disconnect', ( roomCode: string ) => {
-    const storedUser = users.find( u => u.id === socket.id );
-
-    if ( storedUser ) {
-      users = users.filter( u => u.id !== storedUser.id );
-      const room = rooms.find( r => r.roomCode === storedUser.roomCode );
-
-      if ( room ) {
-        room.removeUser( storedUser.id );
-
-        io.to( storedUser.roomCode ).emit( 'room-updated', room.users );
-      }
-    }
-  } )
-} );
-
-server.listen( PORT, () => {
-  init();
-  console.log( `Server started on port: ${PORT}` );
-} );
+    this._io.to( request.roomCode ).emit( 'game-started', startedGameResponse );
+  }
+}

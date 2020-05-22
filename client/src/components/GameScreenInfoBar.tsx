@@ -8,6 +8,7 @@ const GameScreenInfoBar: React.FC = () => {
     drawingCard,
     drawCard,
     isMyTurn,
+    isGameOver,
     isStarted,
     startGame,
   } = useContext( GlobalContext );
@@ -36,6 +37,11 @@ const GameScreenInfoBar: React.FC = () => {
   const [ content, setContent ] = useState<JSX.Element>();
 
   useEffect( () => {
+    if ( isGameOver ) {
+      setContent( <span>Game Over!</span> );
+      return;
+    }
+
     if ( canStartGame() ) {
       setContent( startGameButton );
     } else if ( isStarted ) {
@@ -47,7 +53,7 @@ const GameScreenInfoBar: React.FC = () => {
     } else {
       setContent( <span>Welcome!</span> )
     }
-  }, [ isStarted, canStartGame, isMyTurn ] );
+  }, [ isGameOver, isStarted, canStartGame, isMyTurn ] );
 
   return (
     <div id="game-screen-info-bar">

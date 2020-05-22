@@ -9,7 +9,8 @@ export default ( state: GlobalState, action: Action ): GlobalState => {
         ...state,
         drawingCard: false,
         drawnCard: action.payload.drawnCard,
-        kingCount: action.payload.kingCount
+        kingCount: action.payload.kingCount,
+        isGameOver: action.payload.isGameOver
       }
     case ActionType.CONNECTED:
       return {
@@ -18,6 +19,11 @@ export default ( state: GlobalState, action: Action ): GlobalState => {
         loading: action.payload.loading,
         socket: action.payload.socket,
       };
+    case ActionType.CONNECTION_FAILED:
+      return {
+        ...state,
+        message: action.payload.message
+      }
     case ActionType.DRAWING_CARD:
       return {
         ...state,

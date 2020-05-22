@@ -16,15 +16,15 @@ const App: React.FC = () => {
     me,
     makeConnection,
     setCardImages,
-  } = useContext(GlobalContext);
+  } = useContext( GlobalContext );
 
-  useEffect(() => {
+  useEffect( () => {
     loadImage();
     // TODO: temp
-    setTimeout(() => {
+    setTimeout( () => {
       makeConnection();
-    }, 2000);
-  }, []);
+    }, 2000 );
+  }, [] );
 
   const loadImage = () => {
     // let images = [];
@@ -37,25 +37,25 @@ const App: React.FC = () => {
       let spriteHeight = 153.2;
 
       let cardImages = new Array<CardImage>();
-      for (let x = 0; x < rows; x++) {
-        for (let y = 0; y < cols; y++) {
-          cardImages.push({
-            suit: getSuit(x),
+      for ( let x = 0; x < rows; x++ ) {
+        for ( let y = 0; y < cols; y++ ) {
+          cardImages.push( {
+            suit: getSuit( x ),
             value: x !== 4 ? y.toString() : 'backside',
             width: spriteWidth,
             height: spriteHeight,
             x: y * spriteWidth,
             y: x * spriteHeight,
-          } as CardImage);
+          } as CardImage );
         }
       }
 
-      setCardImages(image, cardImages);
+      setCardImages( image, cardImages );
     };
   };
 
-  const getSuit = (row: number): string => {
-    switch (row) {
+  const getSuit = ( row: number ): string => {
+    switch ( row ) {
       case 0:
         return 'clubs';
       case 1:
@@ -75,11 +75,11 @@ const App: React.FC = () => {
       {loading ? (
         <LoadingScreen />
       ) : (
-        <>
-          <InfoBar />
-          {!joining && me ? <GameScreen /> : <RoomCodeScreen />}
-        </>
-      )}
+          <>
+            <InfoBar />
+            {!joining && me ? <GameScreen /> : <RoomCodeScreen />}
+          </>
+        )}
     </div>
   );
 };
