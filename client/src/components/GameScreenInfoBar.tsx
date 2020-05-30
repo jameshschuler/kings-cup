@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { GlobalContext } from '../context/GlobalContext';
+import EventLog from './EventLog';
 
 const GameScreenInfoBar: React.FC = () => {
   const {
@@ -11,7 +12,7 @@ const GameScreenInfoBar: React.FC = () => {
     isGameOver,
     isStarted,
     startGame,
-  } = useContext( GlobalContext );
+  } = useContext(GlobalContext);
 
   const drawCardButton = (
     <button
@@ -34,32 +35,33 @@ const GameScreenInfoBar: React.FC = () => {
     </button>
   );
 
-  const [ content, setContent ] = useState<JSX.Element>();
+  const [content, setContent] = useState<JSX.Element>();
 
-  useEffect( () => {
-    if ( isGameOver ) {
-      setContent( <span>Game Over!</span> );
+  useEffect(() => {
+    if (isGameOver) {
+      setContent(<span>Game Over!</span>);
       return;
     }
 
-    if ( canStartGame() ) {
-      setContent( startGameButton );
-    } else if ( isStarted ) {
-      if ( isMyTurn() ) {
-        setContent( drawCardButton )
+    if (canStartGame()) {
+      setContent(startGameButton);
+    } else if (isStarted) {
+      if (isMyTurn()) {
+        setContent(drawCardButton);
       } else {
-        setContent( <span id='whose-turn'>It's {currentTurn?.name}'s turn!</span> )
+        setContent(
+          <span id="whose-turn">It's {currentTurn?.name}'s turn!</span>
+        );
       }
     } else {
-      setContent( <span>Welcome!</span> )
+      setContent(<span>Welcome!</span>);
     }
-  }, [ isGameOver, isStarted, canStartGame, isMyTurn ] );
+  }, [isGameOver, isStarted, canStartGame, isMyTurn]);
 
   return (
     <div id="game-screen-info-bar">
-      <div id="buttons">
-        {content}
-      </div>
+      <div id="buttons">{content}</div>
+      <EventLog />
     </div>
   );
 };

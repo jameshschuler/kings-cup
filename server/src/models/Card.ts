@@ -1,4 +1,4 @@
-import { Suit } from './enum/Suit';
+import { Suit } from './enums/Suit';
 
 export interface Card {
   suit: Suit;

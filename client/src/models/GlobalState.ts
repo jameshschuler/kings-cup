@@ -1,5 +1,6 @@
 import { CardImage } from './CardImage';
 import { DrawnCardResponse } from './response/DrawnCardResponse';
+import { EventResponse } from './response/EventResponse';
 import { UserResponse } from './response/UserResponse';
 import { User } from './User';
 
@@ -13,6 +14,7 @@ export interface GlobalState {
   currentTurn: User | null;
   drawingCard: boolean;
   drawnCard: DrawnCardResponse | null;
+  eventMessages: EventResponse[];
   isGameOver: boolean;
   isStarted: boolean;
   joining: boolean;

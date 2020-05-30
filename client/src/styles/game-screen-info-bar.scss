@@ -1,12 +1,52 @@
 #game-screen-info-bar {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 55px;
-  padding: .5rem;
-  border-bottom: 2px solid grey;
+  padding: 0.5rem 0;
 
-  span {
-    font-size: 1.5rem;
+  #buttons {
+    border-bottom: 2px solid grey;
+    padding: 0.5rem 0;
+    text-align: center;
+    width: 100%;
+
+    span {
+      font-size: 1.5rem;
+    }
+  }
+
+  #event-log {
+    margin-top: 1rem;
+    width: 100%;
+
+    .event {
+      align-items: center;
+      display: flex;
+      flex-wrap: wrap;
+      margin: 0.5rem 0;
+      padding: 0.25rem 0.5rem;
+
+      .event-type {
+        background-color: #62a1e6;
+        border-radius: 4px;
+        color: white;
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-right: 0.5rem;
+        padding: 0.25rem 0.5rem;
+      }
+
+      .join.event-type {
+      }
+
+      .disconnect.event-type {
+        background-color: #721c24;
+      }
+
+      .event-message {
+        font-size: 1.1rem;
+      }
+    }
   }
 }

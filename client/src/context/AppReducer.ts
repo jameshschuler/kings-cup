@@ -1,5 +1,5 @@
 import { Action } from '../models/Action';
-import { ActionType } from '../models/constants/ActionType';
+import { ActionType } from '../models/enums/ActionType';
 import { GlobalState } from '../models/GlobalState';
 
 export default ( state: GlobalState, action: Action ): GlobalState => {
@@ -28,6 +28,11 @@ export default ( state: GlobalState, action: Action ): GlobalState => {
       return {
         ...state,
         drawingCard: action.payload.drawingCard
+      }
+    case ActionType.EVENT:
+      return {
+        ...state,
+        eventMessages: [ ...state.eventMessages, action.payload.eventResponse ]
       }
     case ActionType.GAME_STARTED:
       return {

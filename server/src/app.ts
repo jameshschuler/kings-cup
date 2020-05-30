@@ -1,19 +1,17 @@
 import express from 'express';
 import http from 'http';
 import socketio from 'socket.io';
+import { EventType } from './models/enums/EventType';
 import { JoinRoomRequest } from './models/request/JoinRoomRequest';
 import { StartGameRequest } from './models/request/StartGameRequest';
+import { EventResponse } from './models/response/EventResponse';
 import { Room } from './models/Room';
 import { User } from './models/User';
-
-( function () {
-  const app = new App( process.env.PORT! );
-}() );
 
 /**
  * 
  */
-class App {
+export class App {
   private _app: any;
   private _port: number;
   private _server: any;
@@ -21,7 +19,7 @@ class App {
   private _users = new Array<User>();
   private _rooms = new Array<Room>();
 
-  constructor ( port: string ) {
+  constructor( port: string ) {
     this._port = parseInt( port ) || 5000;
 
     this._app = express();
@@ -31,7 +29,7 @@ class App {
     this._server.listen( this._port, () => {
       this.init();
       this.registerEvents();
-      console.log( `Server started on port: ${this._port}` );
+      console.log( `Server listening on port: ${this._port}` );
     } );
   }
 
@@ -50,6 +48,10 @@ class App {
         room.removeUser( storedUser.id );
 
         this._io.to( storedUser.roomCode ).emit( 'room-updated', room.users );
+        this._io.to( storedUser.roomCode ).emit( 'event', {
+          message: `${storedUser.name} has left the room!`,
+          eventType: EventType.DISCONNECT
+        } as EventResponse );
       }
     }
   }
@@ -139,6 +141,10 @@ class App {
 
     socket.emit( 'joined-room', { name: user.name, roomCode: user.roomCode } );
     this._io.to( request.roomCode ).emit( 'room-updated', storedRoom.users );
+    this._io.to( request.roomCode ).emit( 'event', {
+      message: `${user.name} has joined the room!`,
+      eventType: EventType.JOIN
+    } as EventResponse );
   }
 
   /**

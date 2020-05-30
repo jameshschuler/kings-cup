@@ -1,5 +1,5 @@
 import { Card } from './Card';
-import { Suit } from './enum/Suit';
+import { Suit } from './enums/Suit';
 import { Game } from './Game';
 import { DrawnCardResponse } from './response/DrawnCardResponse';
 import { EndTurnResponse } from './response/EndTurnResponse';
@@ -12,7 +12,7 @@ export class Room {
   private _users: Array<User>;
   private _game: Game;
 
-  public constructor ( roomCode: string ) {
+  public constructor( roomCode: string ) {
     this._roomCode = roomCode;
     this._users = new Array<User>();
     this._game = new Game();
