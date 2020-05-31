@@ -2,6 +2,7 @@ import React, { createContext, useReducer } from 'react';
 import io from 'socket.io-client';
 import { CardImage } from '../models/CardImage';
 import { ActionType } from '../models/enums/ActionType';
+import { EventType } from '../models/enums/EventType';
 import { GlobalState } from '../models/GlobalState';
 import { DrawnCardResponse } from '../models/response/DrawnCardResponse';
 import { EndTurnResponse } from '../models/response/EndTurnResponse';
@@ -25,7 +26,7 @@ const initialState: GlobalState = {
   kingCount: 0,
   loading: true,
   me: null,
-  message: 'Loading...',
+  message: 'Connecting...',
   players: [],
   socket: null,
 
@@ -176,6 +177,20 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
             isGameOver: response.isGameOver,
           },
         });
+
+        if (response.isGameOver) {
+          setTimeout(() => {
+            dispatch({
+              type: ActionType.EVENT,
+              payload: {
+                eventResponse: {
+                  eventType: EventType.GameOver,
+                  message: 'Game Over!',
+                },
+              },
+            });
+          }, 250);
+        }
       });
 
       socket.on('event', (response: EventResponse) => {

@@ -12,7 +12,7 @@ export class Game {
   private _drawnCards: Array<Card> = [];
   private _kingCount: number = 0;
 
-  public constructor () { }
+  public constructor() { }
 
   public get currentTurn(): User | null { return this._currentTurn; }
   public get isGameOver(): boolean { return this._isGameOver; }
@@ -22,7 +22,6 @@ export class Game {
   public drawCard(): Card {
     const drawnCard = this._deck!.drawCard();
 
-    drawnCard.value = '12';
     if ( drawnCard.value === '12' ) {
       this._kingCount += 1;
     }

@@ -50,7 +50,7 @@ export class App {
         this._io.to( storedUser.roomCode ).emit( 'room-updated', room.users );
         this._io.to( storedUser.roomCode ).emit( 'event', {
           message: `${storedUser.name} has left the room!`,
-          eventType: EventType.DISCONNECT
+          eventType: EventType.Disconnect
         } as EventResponse );
       }
     }
@@ -78,6 +78,20 @@ export class App {
     const response = room.drawCard( user.id );
 
     this._io.to( room.roomCode ).emit( 'card-drawn', response );
+
+    const convertValue = ( value: string | undefined ): string | null => {
+      switch ( value ) {
+        case '12':
+          return 'King';
+        default:
+          return null;
+      }
+    }
+
+    this._io.to( user.roomCode ).emit( 'event', {
+      message: `${user.name} has drawn the ${convertValue( response?.value )} of ${response?.suit}!`,
+      eventType: EventType.DrawCard
+    } as EventResponse );
   }
 
   /**
@@ -143,7 +157,7 @@ export class App {
     this._io.to( request.roomCode ).emit( 'room-updated', storedRoom.users );
     this._io.to( request.roomCode ).emit( 'event', {
       message: `${user.name} has joined the room!`,
-      eventType: EventType.JOIN
+      eventType: EventType.Join
     } as EventResponse );
   }
 
@@ -176,5 +190,9 @@ export class App {
     const startedGameResponse = storedRoom!.startGame();
 
     this._io.to( request.roomCode ).emit( 'game-started', startedGameResponse );
+    this._io.to( request.roomCode ).emit( 'event', {
+      message: `${request.name} has started the game!`,
+      eventType: EventType.StartGame
+    } as EventResponse );
   }
 }

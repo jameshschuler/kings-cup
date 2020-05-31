@@ -9,15 +9,16 @@
   min-width: 1200px;
 
   #play-area {
-    width: 75%;
+    width: 70%;
 
     @import './players-circle.scss';
   }
 
   #info-area {
-    border-left: 2px solid grey;
-    width: 25%;
-    
+    background-color: #ecf0f1;
+    border-radius: 4px;
+    width: 30%;
+
     @import './game-screen-info-bar.scss';
   }
 

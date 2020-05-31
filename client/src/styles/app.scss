@@ -1,9 +1,10 @@
 #root {
-	height: 100vh;
+  height: 100vh;
 }
 
 .container {
-	height: 100%;
+  background-color: #3498db;
+  height: 100%;
 }
 
 @import './purecss/purecss.scss';

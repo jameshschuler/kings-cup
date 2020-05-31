@@ -11,15 +11,20 @@ const EventLog: React.FC = () => {
 
   return (
     <div id="event-log">
+      <h2>Game Log</h2>
       {messages.map((eventMessage: EventResponse, index: number) => {
         return (
           <div key={index} className="event">
-            <span
-              className={`event-type ${eventMessage.eventType.toLowerCase()}`}
-            >
-              {eventMessage.eventType}
+            <span className="event-message">
+              <span
+                className={`event-type ${eventMessage.eventType
+                  .toLowerCase()
+                  .replace('_', '-')}`}
+              >
+                {eventMessage.eventType.replace('_', ' ')}
+              </span>
+              {eventMessage.message}
             </span>
-            <span className="event-message">{eventMessage.message}</span>
           </div>
         );
       })}

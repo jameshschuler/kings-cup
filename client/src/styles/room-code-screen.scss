@@ -5,10 +5,10 @@
   height: 75%;
 
   #room-code-form {
+    background-color: #ecf0f1;
     display: flex;
     flex-direction: column;
-    border: 1px solid grey;
-    border-radius: 0.25rem;
+    border-radius: 4px;
     padding: 1rem 1.5rem;
     width: 40%;
     max-width: 500px;
@@ -23,6 +23,9 @@
     }
 
     button {
+      background-color: #3498db;
+      color: #fff;
+      font-size: 1.25rem;
       width: 40%;
       margin: 1rem auto 0 auto;
     }

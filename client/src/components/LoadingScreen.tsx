@@ -1,15 +1,18 @@
 import React, { useContext } from 'react';
+import loadingVideo from '../assets/loading.webm';
 import { GlobalContext } from '../context/GlobalContext';
 
 const LoadingScreen: React.FC = () => {
-  const { message } = useContext( GlobalContext );
+  const { message } = useContext(GlobalContext);
 
   return (
-    <div id='loading-screen'>
-      {/* <h1 className='company-title'>HomeDoneGames</h1>
-			<h3 className='subtitle'>Presents</h3>
-			<h2 className='game-title'>King's Cup</h2> */}
-      <h2>{message}</h2>
+    <div id="loading-screen">
+      <h1 className="company-title">HomeDoneGames</h1>
+      <video autoPlay={true} loop={true}>
+        <source src={loadingVideo} type="video/webm" />
+        Your browser does not support the video tag. Sad :(
+      </video>
+      <h2 className="subtitle">{message}</h2>
     </div>
   );
 };

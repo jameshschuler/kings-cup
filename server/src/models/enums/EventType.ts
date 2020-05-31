@@ -1,4 +1,6 @@
 export enum EventType {
-    JOIN = "JOIN",
-    DISCONNECT = "DISCONNECT"
+    Join = "JOIN",
+    Disconnect = "DISCONNECT",
+    DrawCard = "DRAW_CARD",
+    StartGame = "START_GAME"
 }
