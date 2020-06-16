@@ -20,7 +20,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     loadImage();
-    // TODO: temp
+    // TODO: temp or should we leave it to show the awesome loading screen?
     setTimeout(() => {
       makeConnection();
     }, 2000);

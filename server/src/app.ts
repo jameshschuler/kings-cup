@@ -64,14 +64,14 @@ export class App {
     const user = this.getUserById( socket.id );
 
     if ( !user ) {
-      // TODO: the user might have left?
+      socket.emit( 'error', { message: 'Something terrible went wrong! Unable to draw card.' } );
       return;
     }
 
     const room = this.getRoom( user?.roomCode );
 
     if ( !room ) {
-      // TODO:
+      socket.emit( 'error', { message: 'Something terrible went wrong! Unable to draw card.' } );
       return;
     }
 
@@ -102,14 +102,15 @@ export class App {
     const user = this.getUserById( socket.id );
 
     if ( !user ) {
-      // TODO:
+      socket.emit( 'error', { message: 'Something terrible went wrong!' } );
       return;
     }
 
     const room = this.getRoom( user.roomCode );
+    // TODO: validate that user socket is in room?
 
     if ( !room ) {
-      // TODO:
+      socket.emit( 'error', { message: 'Something terrible went wrong!' } );
       return;
     }
 
@@ -137,7 +138,7 @@ export class App {
    */
   private joinRoom( request: JoinRoomRequest, socket: SocketIO.Socket ) {
     if ( !request ) {
-      // TODO: handle request being null
+      socket.emit( 'error', { message: 'Unable to join room. Please try again.' } );
     }
 
     let storedRoom = this.getRoom( request.roomCode );
@@ -153,7 +154,7 @@ export class App {
 
     socket.join( request.roomCode );
 
-    socket.emit( 'joined-room', { name: user.name, roomCode: user.roomCode } );
+    socket.emit( 'joined-room', { name: user.name, roomCode: user.roomCode, rules: storedRoom.rules } );
     this._io.to( request.roomCode ).emit( 'room-updated', storedRoom.users );
     this._io.to( request.roomCode ).emit( 'event', {
       message: `${user.name} has joined the room!`,
@@ -169,7 +170,7 @@ export class App {
 
       socket.on( 'draw-card', () => this.drawCard( socket ) );
       socket.on( 'end-turn', () => this.endTurn( socket ) );
-      socket.on( 'start-game', ( request: StartGameRequest ) => this.startGame( request ) );
+      socket.on( 'start-game', ( request: StartGameRequest ) => this.startGame( request, socket ) );
       socket.on( 'join-room', ( request: JoinRoomRequest ) => this.joinRoom( request, socket ) );
       socket.on( 'disconnect', ( roomCode: string ) => this.disconnect( socket ) );
     } );
@@ -179,7 +180,7 @@ export class App {
    * 
    * @param request 
    */
-  private startGame( request: StartGameRequest ): void {
+  private startGame( request: StartGameRequest, socket: socketio.Socket ): void {
     // TODO: validate that requestor socket is in given room
     const storedRoom = this.getRoom( request.roomCode );
 

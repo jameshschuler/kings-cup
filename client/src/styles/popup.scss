@@ -37,6 +37,7 @@
     .content {
       height: 70%;
       padding: 0.25rem;
+      overflow-y: auto;
     }
 
     .buttons {
@@ -57,6 +58,43 @@
     #canvas {
       height: 95%;
       width: 75%;
+    }
+  }
+}
+
+#rules-popup {
+  height: 600px;
+  width: 800px;
+
+  .header {
+    color: black;
+
+    h2 {
+      font-size: 3rem;
+    }
+  }
+
+  .content {
+    color: black;
+
+    .rule {
+      display: flex;
+      align-items: baseline;
+      margin-bottom: 0.5rem;
+
+      .rule-value {
+        margin: 0;
+      }
+
+      .rule-descriptions {
+        list-style-type: none;
+        padding-left: 1rem;
+        margin: 0.5rem 0;
+
+        .rule-description {
+          font-size: 1.25rem;
+        }
+      }
     }
   }
 }

@@ -49,7 +49,8 @@ export default ( state: GlobalState, action: Action ): GlobalState => {
       return {
         ...state,
         joining: action.payload.joining,
-        me: action.payload.response
+        me: action.payload.response,
+        rules: action.payload.response.rules
       }
     case ActionType.ROOM_UPDATED:
       return {

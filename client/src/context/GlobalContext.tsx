@@ -28,6 +28,7 @@ const initialState: GlobalState = {
   me: null,
   message: 'Connecting...',
   players: [],
+  rules: [],
   socket: null,
 
   /// Functions (actions and helpers)
@@ -35,6 +36,7 @@ const initialState: GlobalState = {
   displayCard: (canvas: HTMLCanvasElement) => {},
   drawCard: Function,
   endTurn: Function,
+  getRule: Function,
   isMyTurn: Function,
   joinRoom: (name: string, roomCode: string) => {},
   makeConnection: Function,
@@ -67,6 +69,7 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
       me,
       message,
       players,
+      rules,
       socket,
     },
     dispatch,
@@ -88,6 +91,15 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
     }
 
     return false;
+  };
+
+  const getRule = (): string[] => {
+    if (drawnCard) {
+      const rule = rules.find((e) => e.value === drawnCard.value);
+      return rule ? rule.descriptions : [];
+    }
+
+    return [];
   };
 
   const displayCard = (canvas: HTMLCanvasElement) => {
@@ -281,12 +293,14 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
         me,
         message,
         players,
+        rules,
         socket,
         // Functions (actions and helpers)
         canStartGame,
         drawCard,
         displayCard,
         endTurn,
+        getRule,
         isMyTurn,
         joinRoom,
         makeConnection,

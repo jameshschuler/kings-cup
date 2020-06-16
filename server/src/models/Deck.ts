@@ -5,7 +5,7 @@ export class Deck {
   private _values = [ '2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace' ];
   private _suitValues = [ 1, 2, 3, 4 ];
 
-  public constructor () {
+  public constructor() {
     this.generateCards();
     this.shuffle();
   }
@@ -16,7 +16,7 @@ export class Deck {
 
   private generateCards(): void {
     for ( let suit of this._suitValues ) {
-      for ( let value in this._values ) {
+      for ( let value of this._values ) {
         this._cards.push( {
           value,
           suit

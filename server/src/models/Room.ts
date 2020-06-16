@@ -26,6 +26,7 @@ export class Room {
   }
 
   public get roomCode(): string { return this._roomCode; }
+  public get rules(): Rule[] { return this._rules; }
 
   public get users(): Array<UserResponse> {
     const response: UserResponse[] = this._users.map( ( u: User, index: number ) => {
@@ -114,43 +115,43 @@ export class Room {
     return [
       {
         value: '2',
-        descriptions: [ '2 is you! Take a drink!' ]
+        descriptions: [ '2 is you! Give someone a drink!' ]
       },
       {
         value: '3',
-        descriptions: [ '' ]
+        descriptions: [ '3 is me! Take a drink!' ]
       },
       {
         value: '4',
-        descriptions: [ '' ]
+        descriptions: [ '4 is floor. Don\'t be the last person to touch the floor!' ]
       },
       {
         value: '5',
-        descriptions: [ '' ]
+        descriptions: [ '5 is guys! All the guys take a drink!' ]
       },
       {
         value: '6',
-        descriptions: [ '' ]
+        descriptions: [ '6 is chicks! All the chicks take a drink!' ]
       },
       {
         value: '7',
-        descriptions: [ '' ]
+        descriptions: [ '7 is heaven. Don\'t be the last reach to raise your hand!' ]
       },
       {
         value: '8',
-        descriptions: [ '' ]
+        descriptions: [ '8 is make a date. Pick a drinking buddy!' ]
       },
       {
         value: '9',
-        descriptions: [ '' ]
+        descriptions: [ '9 is bust a rhyme!' ]
       },
       {
         value: '10',
-        descriptions: [ '' ]
+        descriptions: [ '10 is categories! Pick a category!' ]
       },
       {
         value: 'Jack',
-        descriptions: [ '' ]
+        descriptions: [ 'Jack is make a rule!' ]
       },
       {
         value: 'Queen',

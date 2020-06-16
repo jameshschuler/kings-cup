@@ -23,6 +23,15 @@
     align-items: center;
     justify-content: flex-end;
 
+    .rules-button {
+      margin-right: 0.75rem;
+
+      &:hover {
+        color: #d3d3d3;
+        cursor: pointer;
+      }
+    }
+
     #player-info {
       font-size: 1.2rem;
       margin-right: 0.75rem;

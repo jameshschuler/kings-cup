@@ -1,2 +1,1 @@
-
-declare module '*.webm'
+declare module '*.webm';
